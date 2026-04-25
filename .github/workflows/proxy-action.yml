@@ -1,24 +1,28 @@
-name: "DomainFront Relay - GitHub Edition"
+name: DomainFront Relay
 
 on:
   workflow_dispatch:
     inputs:
       payload:
-        description: 'JSON Payload (same format as your Apps Script)'
+        description: 'JSON Payload {k, u, m, h, b, ct, r}'
         required: true
 
 jobs:
   relay:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install jq (JSON processor)
+      - name: Install jq
         run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
 
-      - name: Execute Relay Script
+      - name: Make script executable and run
         id: proxy_exec
-        run: bash proxy_script.sh '${{ github.event.inputs.payload }}'
+        run: |
+          chmod +x proxy_script.sh
+          bash proxy_script.sh '${{ github.event.inputs.payload }}'
         env:
-          AUTH_KEY: ${{ secrets.AUTH_KEY }}  # کلید امنیتی از Secrets
+          AUTH_KEY: ${{ secrets.AUTH_KEY }}
